@@ -5,8 +5,15 @@ module game{
     export class AppInterface extends React.Component<any,any>{
         public render() {
             return React.jsx(`
-            <h1>Hello, world!</h1>
+                <div>
+                    <h1>Hello, world!</h1>
+                    <a className="btn btn-default" onClick={this.handelClick} >Test</a>
+                </div>
             `);
+        }
+
+        private handelClick(){
+            console.log("click");
         }
     }
 }

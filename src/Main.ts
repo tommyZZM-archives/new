@@ -16,7 +16,7 @@ module game{
             //console.log(AppInterface);
             React.render(
                 React.jsx(`<AppInterface />`),
-                document.getElementById('example')
+                document.getElementById('app')
             );
         }
     }
