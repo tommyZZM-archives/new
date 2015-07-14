@@ -14,6 +14,7 @@ var concat = require("gulp-concat");
 var addsrc = require("gulp-add-src");
 var add = require("gulp-add");
 var ignore = require('gulp-ignore');
+var merge = require("merge-stream");
 
 gulp.task("@concat-each-src",function(){
     gulp.src("./dist/**/*").pipe(clean());
@@ -29,6 +30,8 @@ gulp.task("@concat-each-src",function(){
             .pipe(concat(foldername+".ts"))
             .pipe(gulp.dest("./dist"))
     });
+
+    return merge(tasks);
 });
 
 gulp.task("@webpack-typescript", ["@concat-each-src"], function() {
