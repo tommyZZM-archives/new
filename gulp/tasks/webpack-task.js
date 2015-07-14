@@ -16,7 +16,7 @@ var add = require("gulp-add");
 var ignore = require('gulp-ignore');
 var merge = require("merge-stream");
 
-gulp.task("@concat-each-src",function(){
+gulp.task("@webpack-concat-each-src",function(){
     gulp.src("./dist/**/*").pipe(clean());
 
     var folders = global.paths.src;
@@ -26,7 +26,7 @@ gulp.task("@concat-each-src",function(){
         return gulp.src('./src/**/*.ts')
             .pipe(tssort())
             .pipe(addsrc.prepend('./define/*.h.ts'))
-            .pipe(add('__definetyped.ts', '///<reference path="../define/typings/tsd.d.ts"/>'))
+            .pipe(add('__definetyped.ts', '///<reference path="../define/typings/tsd.d.ts"/>',true))
             .pipe(concat(foldername+".ts"))
             .pipe(gulp.dest("./dist"))
     });
@@ -34,7 +34,7 @@ gulp.task("@concat-each-src",function(){
     return merge(tasks);
 });
 
-gulp.task("@webpack-typescript", ["@concat-each-src"], function() {
+gulp.task("@webpack-load-typescript", ["@webpack-concat-each-src"], function() {
     return gulp.src("./dist/*.ts")
         .pipe(webpack( {
             output: {
@@ -59,7 +59,7 @@ gulp.task("@webpack-typescript", ["@concat-each-src"], function() {
         .pipe(gulp.dest("./dist"));
 });
 
-gulp.task("webpack", ["@webpack-typescript"], function(){
+gulp.task("webpack", ["@webpack-load-typescript"], function(){
     gulp.src('./dist/*.ts')
         .pipe(clean());
 });
