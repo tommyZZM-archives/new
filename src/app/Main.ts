@@ -6,8 +6,6 @@ module game{
 
     import EventDispatcher = core.EventDispatcher;
 
-    Pixi
-
     export class Main extends EventDispatcher{
 
         public constructor(){
