@@ -87,3 +87,7 @@ gulp.task("webpack-watch", ["@webpack-load-src"], function(){
         return core.path+"/**/*.js";
     }),["@webpack-load-src"])
 });
+
+gulp.task("webpack-clean-tmp",function(){
+    gulp.start(["@webpack-clean-tmp"]);
+});
