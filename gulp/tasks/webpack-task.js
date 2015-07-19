@@ -8,58 +8,82 @@ var path = require('path');
 var gulp = require("gulp");
 var gutil = require("gulp-util");
 var webpack = require("webpack-stream");
+
 var clean = require("gulp-clean");
-var tssort = require("gulp-typescript-easysort");
-var concat = require("gulp-concat");
-var addsrc = require("gulp-add-src");
-var add = require("gulp-add");
-var ignore = require('gulp-ignore');
+var named = require("vinyl-named");
 var merge = require("merge-stream");
+var concat = require("gulp-concat");
+var add = require("gulp-add");
 
-gulp.task("@webpack-concat-each-src",function(){
-    gulp.src("./dist/**/*").pipe(clean());
+var extname = ".es6~";
 
-    var folders = global.paths.src;
+gulp.task("@webpack-clean-tmp",function(){
+    return gulp.src("./**/*"+extname).pipe(clean());
+});
 
-    var tasks = folders.map(function(folder) {
-        var foldername = folder.substring(folder.lastIndexOf("/") + 1, folder.length);
-        return gulp.src('./src/**/*.ts')
-            .pipe(tssort())
-            .pipe(addsrc.prepend('./define/*.h.ts'))
-            .pipe(add('__definetyped.ts', '///<reference path="../define/typings/tsd.d.ts"/>',true))
-            .pipe(concat(foldername+".ts"))
-            .pipe(gulp.dest("./dist"))
+//获取每个核心的源码文件夹
+gulp.task("@webpack-concat-each-core",function(){
+    var cores = global.paths.src;
+    var i=0;
+    var namebetoken = [];
+
+    var tasks = cores.map(function(core) {
+        var foldername = core.path.substring(core.path.lastIndexOf("/") + 1, core.path.length);
+
+        var entryname = (core.name||foldername)+extname;
+        if(namebetoken.indexOf(core.name)>=0){
+            throw new gutil.PluginError("[task]@webpack-concat-each-core", "duplicate core name in"+JSON.stringify(core));
+        }else{
+            namebetoken.push(core.name);
+        }
+
+        cores[i].entrypath = path.join(core.path,entryname);
+        i++;
+
+        return gulp.src([path.join(core.path,core.entry||'Main.js')])
+            .pipe(add('use_strict.js', '"use strict";',true))
+            .pipe(concat(entryname))
+            .pipe(gulp.dest(core.path))
     });
 
     return merge(tasks);
 });
 
-gulp.task("@webpack-load-typescript", ["@webpack-concat-each-src"], function() {
-    return gulp.src("./dist/*.ts")
-        .pipe(webpack( {
+//source build
+gulp.task("@webpack-load-src",["@webpack-concat-each-core"], function() {
+    gulp.src("./dist/*").pipe(clean());
+
+    var cores = global.paths.src;
+
+    return gulp.src(cores.map(function (core) {
+        return core.entrypath;
+    }))
+        .pipe(named())
+        .pipe(webpack({
             output: {
-                filename: 'main.js'
+                filename: '[name].js'
             },
-            externals: {
-                'react': 'window.React'// 表示这个依赖项是外部lib，遇到require它不需要编译，且在浏览器端对应window.React
-                ,'pixi': 'window.PIXI'
-            },
-            resolve: {
-                extensions: ['', '.webpack.js', '.web.js', '.js', '.ts']
-            },
+            externals: global.paths.externals,
             module: {
                 loaders: [
-                    { test: /\.ts$/, loader: 'ts-loader!ts-jsx-loader' }
+                    {test: /\.es6~$/, exclude: /node_modules/, loader: "babel-loader"}
                 ]
             }
-        },null,function(err, stats) {
-            if(err) throw new gutil.PluginError("webpack", err);
-            //gutil.log(stats.toString())
+        }, null, function (err, stats) {
+            if (err) throw new gutil.PluginError("webpack", err);
+            //gulp.start(["@webpack-clean-tmp"]);
         }))
         .pipe(gulp.dest("./dist"));
 });
 
-gulp.task("webpack", ["@webpack-load-typescript"], function(){
-    gulp.src('./dist/*.ts')
-        .pipe(clean());
+gulp.task("webpack", ["@webpack-load-src"], function(){
+
+});
+
+gulp.task("webpack-watch", ["@webpack-load-src"], function(){
+    var cores = global.paths.src;
+
+    gulp.watch(cores.map(function (core) {
+        return core.path+"/**/*.js";
+    }),["@webpack-load-src"])
 });

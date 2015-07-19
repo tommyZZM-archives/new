@@ -42,5 +42,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Files that might appear on external disk
 node_modules
 dist
+*.*~

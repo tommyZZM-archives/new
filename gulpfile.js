@@ -8,9 +8,13 @@ var requireDir  = require('require-dir');
 // Specify game project paths for tasks.
 global.paths = {
     src: [
-        './src'
+        {"name":"main","path":'./src',entry:"Main.js"}
     ],
-    out: './dist'
+    out: './dist',
+    externals:{
+        react: 'window.React',
+        pixi: 'window.PIXI'
+    }
 };
 
 // Require all tasks in gulp/tasks, including subfolders
