@@ -7,8 +7,9 @@ var requireDir  = require('require-dir');
 
 // Specify game project paths for tasks.
 global.paths = {
-    src: [
-        {"name":"main","path":'./src',entry:"Main.js"}
+    overdomains:"var",
+    domains: [
+        {"name":"main","path":'./src',entry:"Main.js"}//export:true
     ],
     out: './dist',
     externals:{

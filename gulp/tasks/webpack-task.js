@@ -21,46 +21,48 @@ gulp.task("@webpack-clean-tmp",function(){
     return gulp.src("./**/*"+extname).pipe(clean());
 });
 
-//获取每个核心的源码文件夹
-gulp.task("@webpack-concat-each-core",function(){
-    var cores = global.paths.src;
+//获取每个domain的源码文件夹
+gulp.task("@webpack-concat-each-domain",function(){
+    var domains = global.paths.domains;
     var i=0;
     var namebetoken = [];
 
-    var tasks = cores.map(function(core) {
-        var foldername = core.path.substring(core.path.lastIndexOf("/") + 1, core.path.length);
+    var tasks = domains.map(function(domain) {
+        var foldername = domain.path.substring(domain.path.lastIndexOf("/") + 1, domain.path.length);
 
-        var entryname = (core.name||foldername)+extname;
-        if(namebetoken.indexOf(core.name)>=0){
-            throw new gutil.PluginError("[task]@webpack-concat-each-core", "duplicate core name in"+JSON.stringify(core));
+        var entryname = (domain.name||foldername)+extname;
+        if(namebetoken.indexOf(domain.name)>=0){
+            throw new gutil.PluginError("[task]@webpack-concat-each-core", "duplicate core name in"+JSON.stringify(domain));
         }else{
-            namebetoken.push(core.name);
+            namebetoken.push(domain.name);
         }
 
-        cores[i].entrypath = path.join(core.path,entryname);
+        domains[i].entrypath = path.join(domain.path,entryname);
         i++;
 
-        return gulp.src([path.join(core.path,core.entry||'Main.js')])
+        return gulp.src([path.join(domain.path,domain.entry||'Main.js')])
             .pipe(add('use_strict.js', '"use strict";',true))
             .pipe(concat(entryname))
-            .pipe(gulp.dest(core.path))
+            .pipe(gulp.dest(domain.path))
     });
 
     return merge(tasks);
 });
 
 //source build
-gulp.task("@webpack-load-src",["@webpack-concat-each-core"], function() {
+gulp.task("@webpack-load-src",["@webpack-concat-each-domain"], function() {
     gulp.src("./dist/*").pipe(clean());
 
-    var cores = global.paths.src;
+    var domains = global.paths.domains;
 
-    return gulp.src(cores.map(function (core) {
-        return core.entrypath;
+    return gulp.src(domains.map(function (domain) {
+        return domain.entrypath;
     }))
         .pipe(named())
         .pipe(webpack({
             output: {
+                libraryTarget: "var",
+                library: "[name]",
                 filename: '[name].js'
             },
             externals: global.paths.externals,
