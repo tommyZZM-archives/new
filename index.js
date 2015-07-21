@@ -1,8 +1,12 @@
 /**
  * Created by tommyZZM on 2015/7/6.
  */
+"use strict";
+
 var app = require('app');  // Module to control application life.
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
+var gulpfile = require("./gulpfile.js");
+var gulp = global.paths.gulp;
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -18,6 +22,8 @@ app.on('window-all-closed', function() {
     }
 });
 
+var watchfiles = global.paths.watchfiles;
+
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
 app.on('ready', function() {
@@ -29,6 +35,15 @@ app.on('ready', function() {
 
     // Open the devtools.
     mainWindow.openDevTools();
+
+    var domains = global.paths.domains;
+    gulp.watch(domains.map(function (domain) {
+        return domain.path+"/**/*.js";
+    }).concat(watchfiles),function(){
+        mainWindow.reload();
+    });
+
+    gulpfile.runtasks();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {

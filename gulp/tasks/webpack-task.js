@@ -5,7 +5,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var gulp = require("gulp");
+var gulp = global.paths.gulp||require("gulp");
 var gutil = require("gulp-util");
 var webpack = require("webpack-stream");
 
@@ -83,10 +83,10 @@ gulp.task("webpack", ["@webpack-load-src"], function(){
 });
 
 gulp.task("webpack-watch", ["@webpack-load-src"], function(){
-    var cores = global.paths.src;
+    var domains = global.paths.domains;
 
-    gulp.watch(cores.map(function (core) {
-        return core.path+"/**/*.js";
+    gulp.watch(domains.map(function (domain) {
+        return domain.path+"/**/*.js";
     }),["@webpack-load-src"])
 });
 
