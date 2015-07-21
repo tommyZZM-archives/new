@@ -4,11 +4,8 @@
 
 class Main{
     constructor(){
-        [1,2,3].map((ele)=>{
-            this;
-            return ele+1;
-        })
+
     }
 }
 
-//module.exports = Main;
+export default Main;
