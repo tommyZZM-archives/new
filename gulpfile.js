@@ -27,8 +27,19 @@ gulp.task('default', function(){
     //gulp.start("webpack");
 });
 
-var cp = require('child_process');
+gulp.task('watch-all', function(){
+    var domains = global.paths.domains;
+    gulp.watch(domains.map(function (domain) {
+        return domain.path+"/**/*.js";
+    }).concat(global.paths.watchfiles),["on-watch-change"]);
+});
 
-exports.runtasks = function(){
-    //cp.exec("gulp webpack-watch");
-};
+gulp.task("on-watch-change",["webpack"],function(){
+    if(typeof process!== "undefined"){
+        //console.log("[onfinish]");
+        if(typeof process.send === "function"){
+            process.send({ cmd: 'onWatchChanged' })
+        }
+    }
+});
+
