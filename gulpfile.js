@@ -27,7 +27,7 @@ gulp.task('default', function(){
     //gulp.start("webpack");
 });
 
-gulp.task('watch-all', function(){
+gulp.task('watch-all',["on-watch-change"], function(){
     var domains = global.paths.domains;
     gulp.watch(domains.map(function (domain) {
         return domain.path+"/**/*.js";
@@ -38,7 +38,7 @@ gulp.task("on-watch-change",["webpack"],function(){
     if(typeof process!== "undefined"){
         //console.log("[onfinish]");
         if(typeof process.send === "function"){
-            process.send({ cmd: 'onWatchChanged' })
+            process.send({ cmd: 'onWatchChanged' });
         }
     }
 });
