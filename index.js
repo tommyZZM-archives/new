@@ -5,6 +5,7 @@
 
 var app = require('app');  // Module to control application life.
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
+var iconv = require("iconv-lite");
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -29,6 +30,8 @@ app.on('ready', function() {
     // and load the index.html of the app.
     mainWindow.loadUrl('file://' + __dirname + '/index.html');
 
+    mainWindow.setMenu(null)
+
     // Open the devtools.
     mainWindow.openDevTools();
 
@@ -46,6 +49,7 @@ app.on('ready', function() {
     });
 });
 
+//console.log(process.stdout);
 var cp = require('child_process');
 var watching = function(fn){
     if(fn===void 0){fn = function(){}}
@@ -62,9 +66,11 @@ var watching = function(fn){
 
     //console.log(typeof watch.stdout,typeof watch.stderr,typeof watch.send)
     if(watch.stdout){
-        watch.stdout.setEncoding('utf8');watch.stdout.on('data', function(data) {
+        watch.stdout.on('data', function(data) {
             //var str = data.replace(/\n$/i,"");
-            //console.log(data);
+            var str = iconv.decode(data, 'utf8');
+            str = str.replace(/\n$/i,"");
+            //console.log(str);
         });
 
         watch.stderr.setEncoding('utf8');watch.stderr.on('data', function(data) {

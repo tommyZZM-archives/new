@@ -55,6 +55,11 @@ gulp.task("@webpack-load-src",["@webpack-concat-each-domain"], function() {
 
     var domains = global.paths.domains;
 
+    var loader = "babel-loader";
+    if(global.paths.babel && global.paths.babel.polyfill){
+        loader+="?experimental&optional=selfContained";
+    }
+
     return gulp.src(domains.map(function (domain) {
         return domain.entrypath;
     }))
@@ -68,7 +73,7 @@ gulp.task("@webpack-load-src",["@webpack-concat-each-domain"], function() {
             externals: global.paths.externals,
             module: {
                 loaders: [
-                    {test: /\.es6~$/, exclude: /node_modules/, loader: "babel-loader"}
+                    {test: /\.es6~$/, exclude: /node_modules/, loader: loader}
                 ]
             }
         }, null, function (err, stats) {

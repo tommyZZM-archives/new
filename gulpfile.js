@@ -2,11 +2,16 @@
  * Created by tommyZZM on 2015/7/6.
  */
 var gulp = require("gulp");
+var gutil = require("gulp-util");
+
 // Specify game project paths for tasks.
 global.paths = {
-    domains: [
+    domains: [//scriptfile
         {"name":"main","path":'./src',entry:"Main.js"}//export:true
     ],
+    babel:{
+        polyfill:false
+    },
     watchfiles:[
         "./index.html"
     ],
@@ -21,7 +26,7 @@ global.paths = {
 var requireDir  = require('require-dir');
 
 // Require all tasks in gulp/tasks, including subfolders
-requireDir('./gulp/tasks');
+requireDir('./node_app/tasks');
 
 gulp.task('default', function(){
     //gulp.start("webpack");
@@ -36,7 +41,7 @@ gulp.task('watch-all',["on-watch-change"], function(){
 
 gulp.task("on-watch-change",["webpack"],function(){
     if(typeof process!== "undefined"){
-        //console.log("[onfinish]");
+        //console.log("[onfinish哈哈]");
         if(typeof process.send === "function"){
             process.send({ cmd: 'onWatchChanged' });
         }
