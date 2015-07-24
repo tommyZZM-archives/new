@@ -5,7 +5,8 @@
 
 var app = require('app');  // Module to control application life.
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
-var iconv = require("iconv-lite");
+
+var cp_gulp = require("./node_app/electron/cp_gulp.js");
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -30,65 +31,22 @@ app.on('ready', function() {
     // and load the index.html of the app.
     mainWindow.loadUrl('file://' + __dirname + '/index.html');
 
-    mainWindow.setMenu(null)
+    mainWindow.setMenu(null);
 
     // Open the devtools.
     mainWindow.openDevTools();
 
-    var watchtask = watching(function(){
+    cp_gulp.cp_gulptask("watch-all",function() {
         mainWindow.reload();
-    });
+    },false);
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        watchtask.kill();
         mainWindow = null;
     });
 });
 
 //console.log(process.stdout);
-var cp = require('child_process');
-var watching = function(fn){
-    if(fn===void 0){fn = function(){}}
-    //注意这里一定要用gulp.cmd 参:http://matthew-jackson.com/notes/development/node-child_process-enoent-error-windows/
-    var watch = cp.spawn("iojs",["node_modules\\gulp\\bin\\gulp.js","watch-all"],{
-        encoding: 'utf8',
-        timeout: 0,
-        maxBuffer: 200*1024,
-        killSignal: 'SIGTERM',
-        stdio: ['pipe', 'pipe', 'pipe',"ipc"],
-        cwd: undefined,
-        env: process.env
-    });
-
-    //console.log(typeof watch.stdout,typeof watch.stderr,typeof watch.send)
-    if(watch.stdout){
-        watch.stdout.on('data', function(data) {
-            //var str = data.replace(/\n$/i,"");
-            var str = iconv.decode(data, 'utf8');
-            str = str.replace(/\n$/i,"");
-            //console.log(str);
-        });
-
-        watch.stderr.setEncoding('utf8');watch.stderr.on('data', function(data) {
-            //console.log(data);
-        });
-    }
-    watch.on('message', function(data) {
-       //console.log('watchFileChanged:',data);
-        switch (data.cmd){
-            default:{
-                break;
-            }
-            case "onWatchChanged":{
-                console.log("[gulp] watch-all task finished")
-                fn();
-            }
-        }
-    });
-
-    return watch;
-};

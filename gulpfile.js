@@ -32,6 +32,7 @@ gulp.task('default', function(){
     //gulp.start("webpack");
 });
 
+//Electron 使用的子进程运行的 task
 gulp.task('watch-all',["on-watch-change"], function(){
     var domains = global.paths.domains;
     gulp.watch(domains.map(function (domain) {
@@ -41,9 +42,8 @@ gulp.task('watch-all',["on-watch-change"], function(){
 
 gulp.task("on-watch-change",["webpack"],function(){
     if(typeof process!== "undefined"){
-        //console.log("[onfinish哈哈]");
         if(typeof process.send === "function"){
-            process.send({ cmd: 'onWatchChanged' });
+            process.send({ cmd: 'onTaskFinish' });
         }
     }
 });
