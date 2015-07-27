@@ -4,7 +4,7 @@
 
 class Main{
     constructor(){
-        //yield 123;
+        //helloworld
     }
 }
 
