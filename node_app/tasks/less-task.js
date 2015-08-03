@@ -19,5 +19,5 @@ gulp.task("less",["@less-compile"],function(){
         return entry.path;
     });
 
-    gulp.watch(src,["@less-compile"])
+    gulp.watch(src.concat(config.watchfiles),["@less-compile"])
 });
