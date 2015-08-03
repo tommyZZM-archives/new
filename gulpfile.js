@@ -34,10 +34,10 @@ gulp.task('default', function(){
 
 //Electron 使用的子进程运行的 task
 gulp.task('watch-all',["on-watch-change"], function(){
-    var domains = global.paths.domains;
+    var domains = global.gulpConfig.domains;
     gulp.watch(domains.map(function (domain) {
         return domain.path+"/**/*.js";
-    }).concat(global.paths.watchfiles),["on-watch-change"]);
+    }).concat(global.gulpConfig.watchfiles),["on-watch-change"]);
 });
 
 gulp.task("on-watch-change",["webpack"],function(){
