@@ -15,7 +15,7 @@ global.gulpConfig = {
     watchfiles:[
         "./index.html"
     ],
-    out: './dist',
+    out: './bin',
     externals:{
         react: 'window.React',
         pixi: 'window.PIXI'
@@ -26,10 +26,10 @@ global.gulpConfig = {
 var requireDir  = require('require-dir');
 
 // Require all tasks in gulp/tasks, including subfolders
-requireDir('./node_app/tasks');
+requireDir('./tools/tasks');
 
 gulp.task('default', function(){
-    //gulp.start("webpack");
+    gulp.start("webpack");
 });
 
 //Electron 使用的子进程运行的 task

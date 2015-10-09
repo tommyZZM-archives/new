@@ -9,7 +9,10 @@ var gulp = require("gulp");
 var gutil = require("gulp-util");
 var webpack = require("webpack-stream");
 
-var clean = require("gulp-clean");
+var del = require("del");
+var vinylPaths = require("vinyl-paths");
+
+var clean = vinylPaths(del);
 var named = require("vinyl-named");
 var merge = require("merge-stream");
 var concat = require("gulp-concat");
@@ -18,7 +21,7 @@ var add = require("gulp-add");
 var extname = ".es6~";
 
 gulp.task("@webpack-clean-tmp",function(){
-    return gulp.src("./**/*"+extname).pipe(clean());
+    return gulp.src("./**/*"+extname).pipe(vinylPaths(del));
 });
 
 var config = global.gulpConfig;
@@ -57,7 +60,7 @@ gulp.task("@webpack-concat-each-domain",function(){
 
 //source build
 gulp.task("@webpack-load-src",["@webpack-concat-each-domain"], function() {
-    gulp.src("./dist/js/*.js").pipe(clean());
+    gulp.src(path.join(config.out,"style","*.js")).pipe(vinylPaths(del));
 
     var domains = config.domains;
 
@@ -88,7 +91,7 @@ gulp.task("@webpack-load-src",["@webpack-concat-each-domain"], function() {
             if (err) throw new gutil.PluginError("webpack", err);
             //gulp.start(["@webpack-clean-tmp"]);
         }))
-        .pipe(gulp.dest("./dist/js"));
+        .pipe(gulp.dest(path.join(config.out,"js")));
 });
 
 gulp.task("webpack", ["@webpack-load-src"], function(){

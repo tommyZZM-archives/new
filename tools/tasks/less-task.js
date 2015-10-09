@@ -1,6 +1,8 @@
 /**
  * Created by tommyZZM on 2015/7/29.
  */
+var path = require("path");
+
 var gulp = require("gulp");
 var less = require("gulp-less");
 
@@ -11,7 +13,7 @@ gulp.task("@less-compile",function(){
     gulp.src(config.less.entry.map(function(entry){
         return entry.path;
     })).pipe(less())
-    .pipe(gulp.dest("./dist/style"));
+    .pipe(gulp.dest(path.join(config.out,"style")));
 });
 
 gulp.task("less",["@less-compile"],function(){
