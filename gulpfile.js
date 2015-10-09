@@ -17,8 +17,7 @@ global.gulpConfig = {
     ],
     out: './bin',
     externals:{
-        react: 'window.React',
-        pixi: 'window.PIXI'
+        react: 'window.React'
     },
     gulp:gulp
 };
