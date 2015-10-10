@@ -4,8 +4,8 @@
 
 class Main{
     constructor(){
-        //helloworld
+        console.log("helloworld");
     }
 }
 
-export default Main;
+document.addEventListener("DOMContentLoaded",()=>{new Main();});
