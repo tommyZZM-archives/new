@@ -7,7 +7,7 @@ var gutil = require("gulp-util");
 // Specify game project paths for tasks.
 global.gulpConfig = {
     domains: [//scriptfile
-        {"name":"main","path":'./src',entry:"Main.js"}//export:true
+        {"name":"main","path":'./src/Main.js'}//export:true
     ],
     babel:{
         polyfill:false
