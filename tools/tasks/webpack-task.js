@@ -30,7 +30,7 @@ gulp.task("@webpack-source-build",function(){
         loader+="?experimental&optional=selfContained";
     }
 
-    gulp.src(path.join(config.out,"style","*.js")).pipe(vinylPaths(del));
+    gulp.src(path.join(config.out,"js","*.js")).pipe(vinylPaths(del));
 
     var tasks = domains.map(function(domain) {
         //var foldername = domain.path.substring(domain.path.lastIndexOf("/") + 1, domain.path.length);
@@ -47,9 +47,14 @@ gulp.task("@webpack-source-build",function(){
         var stat = fs.statSync(domain.path);
         var src = domain.path;
 
+        domain.dirname = path.dirname(src);
+
         if(stat.isDirectory()){
+            domain.dirname = src;
             src = path.join(src,"**/*.js")
         }
+
+        //console.log(domain.name,domain.path,stat.isDirectory());
 
         return gulp.src(src)
             .pipe(named())
@@ -57,7 +62,7 @@ gulp.task("@webpack-source-build",function(){
                 output: {
                     libraryTarget: "var",
                     library: domain.export?domain.name:"",
-                    filename: (stat.isDirectory()?"[name]":domain.name)+'.js'
+                    filename: ((stat.isDirectory()?"[name]":domain.filename||domain.name)+'.js').toLowerCase()
                 },
                 devtool: 'inline-source-map',
                 externals: config.externals,
@@ -70,7 +75,7 @@ gulp.task("@webpack-source-build",function(){
             }, null, function (err, stats) {
                 if (err) throw new gutil.PluginError("webpack", err);
             }))
-            .pipe(gulp.dest(path.join(config.out,"js")))
+            .pipe(gulp.dest(path.join(config.out,"js",domain.out||"")))
     });
 
     return merge(tasks);
@@ -84,6 +89,6 @@ gulp.task("webpack-watch", ["@webpack-source-build"], function(){
     var domains = config.domains;
 
     gulp.watch(domains.map(function (domain) {
-        return domain.path+"/**/*.js";
+        return domain.dirname+"/**/*.js";
     }),["@webpack-source-build"])
 });
