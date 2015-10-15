@@ -60,6 +60,9 @@ gulp.task("@webpack-source-build",function(){
         return gulp.src(src)
             .pipe(named())
             .pipe(webpack({
+                resolve: {
+                    extensions: ['', '.ts', '.webpack.js', '.web.js', '.js']
+                },
                 output: {
                     libraryTarget: "var",
                     library: domain.export?domain.name:"",
