@@ -29,6 +29,7 @@ gulp.task("@webpack-source-build",function(){
     if(config.babel && config.babel.polyfill){
         loader+="?experimental&optional=selfContained";
     }
+    var tsloader = "awesome-typescript-loader";
 
     gulp.src(path.join(config.out,"js","*.js")).pipe(vinylPaths(del));
 
@@ -51,7 +52,7 @@ gulp.task("@webpack-source-build",function(){
 
         if(stat.isDirectory()){
             domain.dirname = src;
-            src = path.join(src,"**/*.js")
+            src = [path.join(src,"**/*.js"),path.join(src,"**/*.ts")]
         }
 
         //console.log(domain.name,domain.path,stat.isDirectory());
@@ -69,7 +70,7 @@ gulp.task("@webpack-source-build",function(){
                 module: {
                     loaders: [
                         {test: /\.js$/, exclude: /node_modules/, loader: loader},
-                        {test: /\.less$/, loader: "style!css!less"}
+                        {test: /\.ts$/, exclude: /node_modules/, loader: tsloader}
                     ]
                 }
             }, null, function (err, stats) {
@@ -90,5 +91,7 @@ gulp.task("webpack-watch", ["@webpack-source-build"], function(){
 
     gulp.watch(domains.map(function (domain) {
         return domain.dirname+"/**/*.js";
-    }),["@webpack-source-build"])
+    }).concat(domains.map(function (domain) {
+        return domain.dirname+"/**/*.ts";
+    })),["@webpack-source-build"])
 });
