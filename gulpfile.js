@@ -25,7 +25,7 @@ global.gulpConfig = {
 var requireDir  = require('require-dir');
 
 // Require all tasks in gulp/tasks, including subfolders
-requireDir('./tools/tasks');
+requireDir('./node_tools/tasks');
 
 gulp.task('default', function(){
     gulp.start("webpack");
