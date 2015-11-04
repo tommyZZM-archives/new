@@ -1,0 +1,32 @@
+{
+  "name": "helloworld",
+  "version": "1.1.0",
+  "description": "",
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "browserify-shim": {},
+  "dependencies": {
+    "browserify": "^12.0.1",
+    "browserify-shim": "git://github.com/tommyZZM/browserify-shim.git#configable-inscript",
+    "coffeeify": "^1.1.0",
+    "del": "^2.0.2",
+    "exposify": "~0.4.3",
+    "gulp": "latest",
+    "gulp-util": "^3.0.6",
+    "mothership": "~0.2.0",
+    "rename-function-calls": "~0.1.0",
+    "require-dir": "^0.3.0",
+    "resolve": "~0.6.1",
+    "through": "~2.3.4",
+    "tsify": "latest",
+    "typescript": "latest",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-paths": "^2.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.6.0"
+  }
+}
