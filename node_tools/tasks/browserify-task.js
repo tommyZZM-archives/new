@@ -25,8 +25,8 @@ function browserifyBuild(){
     b.on('update', bundle);
     b.on('log', gutil.log);
     function bundle(){
-        return b
-            .transform(babelify)
+        return browserify().add('./src/Main.js')
+            .transform(babelify, {presets: ["es2015", "react"],extensions: [".js"]})
             .transform(coffeeify)
             .transform(browserifyShim,{
                 shim:{
@@ -34,7 +34,7 @@ function browserifyBuild(){
                 }
             })
             .bundle()
-            //.on('error', function (error) { gutil.log(gutil.colors.red(error.toString())); })
+            .on('error', function (error) { gutil.log(gutil.colors.red(error.toString())); })
             .pipe(source('./main.js'))
             .pipe(buffer())
             .pipe(gulp.dest('./dist/js/'));
