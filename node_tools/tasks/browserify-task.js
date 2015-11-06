@@ -7,6 +7,7 @@ var gulp = require("gulp");
 var gutil = require("gulp-util");
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
+var mergeStream = require("merge-stream");
 
 var browserify = require("browserify");
 var watchify = require("watchify");
@@ -16,28 +17,41 @@ var browserifyShim = require("browserify-shim");
 
 var config = global.myConfig;
 
-gulp.task("@build-browserify",function(){
-    return browserifyBuild()
+config.tasks.forEach(task=>{
+    gulp.task("bb@"+task.name,function(){
+        return browserifyBuild(task.entry,task.name,task.outdir,
+            {babelPreset:task.babelPreset,moduleShim:task.moduleShim,watch:true});
+    })
 });
 
-function browserifyBuild(){
-    let b = watchify(browserify().add('./src/Main.js'));
-    b.on('update', bundle);
-    b.on('log', gutil.log);
+gulp.task("@build-browserify",function(){
+    var merged = mergeStream();
+    config.tasks.forEach(task=>{
+        let s = browserifyBuild(task.entry,task.name,task.outdir,
+            {babelPreset:task.babelPreset,moduleShim:task.moduleShim,watch:false});
+        merged.add(s);
+    });
+    return merged
+});
+
+function browserifyBuild(entry,filename,outdir,opts){
+    let b = opts.watch?(watchify(browserify().add(entry))):(browserify().add(entry));
+    if(opts.watch){
+        b.on('update', bundle);
+        b.on('log', gutil.log);
+    }
     function bundle(){
-        return browserify().add('./src/Main.js')
-            .transform(babelify, {presets: ["es2015", "react"],extensions: [".js"]})
+        return b
+            .transform(babelify, {presets: opts.babelPreset,extensions: [".js"]})
             .transform(coffeeify)
             .transform(browserifyShim,{
-                shim:{
-                    react:"global:React"
-                }
+                shim:opts.moduleShim
             })
             .bundle()
             .on('error', function (error) { gutil.log(gutil.colors.red(error.toString())); })
-            .pipe(source('./main.js'))
+            .pipe(source(filename+".js"))//'./main.js'
             .pipe(buffer())
-            .pipe(gulp.dest('./dist/js/'));
+            .pipe(gulp.dest(outdir));//'./dist/js/'
     }
 
     return bundle()

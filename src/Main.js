@@ -5,4 +5,9 @@ class Main{
     constructor(){
 
     }
+
+    static method(){
+
+    }
 }
+
