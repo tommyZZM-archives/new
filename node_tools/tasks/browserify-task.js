@@ -35,7 +35,9 @@ gulp.task("@build-browserify",function(){
 });
 
 function browserifyBuild(entry,filename,outdir,opts){
-    let b = opts.watch?(watchify(browserify().add(entry))):(browserify().add(entry));
+    let b = opts.watch?
+        (watchify(browserify().add(entry))):
+        (browserify().add(entry));
     if(opts.watch){
         b.on('update', bundle);
         b.on('log', gutil.log);
