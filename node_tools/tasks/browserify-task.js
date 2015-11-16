@@ -16,8 +16,9 @@ var coffeeify = require("coffeeify");
 var browserifyShim = require("browserify-shim");
 
 var config = global.myConfig;
+var browserifyTasks =  config.tasks.filter(task=>task.task==="browserify");
 
-config.tasks.forEach(task=>{
+browserifyTasks.forEach(task=>{
     gulp.task("bb@"+task.name,function(){
         return browserifyBuild(task.entry,task.name,task.outdir,
             {babelPreset:task.babelPreset,moduleShim:task.moduleShim,watch:true});
@@ -26,7 +27,7 @@ config.tasks.forEach(task=>{
 
 gulp.task("@build-browserify",function(){
     var merged = mergeStream();
-    config.tasks.forEach(task=>{
+    browserifyTasks.forEach(task=>{
         let s = browserifyBuild(task.entry,task.name,task.outdir,
             {babelPreset:task.babelPreset,moduleShim:task.moduleShim,watch:false});
         merged.add(s);

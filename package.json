@@ -20,6 +20,7 @@
     "del": "^2.0.2",
     "exposify": "~0.4.3",
     "gulp": "latest",
+    "gulp-sass": "^2.1.0",
     "gulp-util": "^3.0.6",
     "merge-stream": "^1.0.0",
     "require-dir": "^0.3.0",

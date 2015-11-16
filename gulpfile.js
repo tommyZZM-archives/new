@@ -11,9 +11,14 @@ global.myConfig = {
         moduleShim:{}
     },
     tasks: [
-        {entry: "./src/Main.js", name: "main", outdir: "./dist/js", babelPreset: ["es2015", "stage-1"], moduleShim: {
-            "react":"global:React"
-        }}
+        {
+            task:"browserify"
+            , entry: "./src/Main.js"
+            , name: "main"
+            , outdir: "./dist/js"
+            , babelPreset: ["es2015", "stage-1"]
+            , moduleShim: {"react":"global:React"}
+        }
     ]
 };
 
