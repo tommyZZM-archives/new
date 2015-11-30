@@ -19,8 +19,6 @@ var addonsPredefineMap = {
     "browserify-shim":require("browserify-shim")
 };
 
-var dtsGeneratify = require("../libs/dtsGeneratify");
-
 var config = global.myConfig;
 var browserifyTasks =  config.tasks.filter(task=>task.task==="browserify");
 
