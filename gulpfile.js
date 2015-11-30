@@ -12,12 +12,21 @@ global.myConfig = {
     },
     tasks: [
         {
-            task:"browserify"
-            , entry: "./src/Main.js"
+            task: "browserify"
+            , entry: "./src/Main.ts"
             , name: "main"
             , outdir: "./dist/js"
-            , babelPreset: ["es2015", "stage-1"]
-            , moduleShim: {"react":"global:React"}
+            , addons: {
+                "tsify": {
+                    isplugin: true
+                    ,jsx:"react"
+                },
+                "browserify-shim": {
+                    "shim":{
+                        "react": "global:React"
+                    }
+                }
+            }
         }
     ]
 };
