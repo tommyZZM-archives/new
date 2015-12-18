@@ -16,6 +16,7 @@ global.myConfig = {
             , entry: "./src/Main.ts"
             , name: "main"
             , outdir: "./dist/js"
+            , standlone:false
             , addons: {
                 "tsify": {
                     isplugin: true

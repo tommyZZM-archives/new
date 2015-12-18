@@ -25,7 +25,11 @@ var browserifyTasks =  config.tasks.filter(task=>task.task==="browserify");
 browserifyTasks.forEach(task=>{
     gulp.task("bb@"+task.name,function(){
         return browserifyBuild(task.entry,task.name,task.outdir,
-            {watch:true,addons:task.addons});
+            {
+                watch:true
+                ,addons:task.addons
+                ,standalone:task.standalone
+            });
     })
 });
 
@@ -36,14 +40,29 @@ gulp.task("@build-browserify",function(){
             {
                 watch:false
                 ,addons:task.addons
+                ,standalone:(()=>{
+                if(!task.standalone){
+                    return false;
+                }
+                if(typeof task.standalone==="string"){
+                    return task.standalone
+                }
+                if(typeof task.boolean==="boolean"){
+                    return task.name
+                }
+            })()
             });
         merged.add(s);
     });
     return merged
 });
 
-function browserifyBuild(entry,filename,outdir,opts){
-    let br = browserify().add(entry);
+
+function browserifyBuild(entry,name,outdir,opts){
+    let br = browserify({
+        entries:entry,
+        standalone:opts.standalone
+    });
     let b = opts.watch?
         (watchify(br)):
         (br);
@@ -53,10 +72,10 @@ function browserifyBuild(entry,filename,outdir,opts){
     }
     function bundle(){
         return broserifyAddTransforms(b,opts.addons)
-            //.plugin(addonsPredefineMap.tsify)
+        //.plugin(addonsPredefineMap.tsify)
             .bundle()
             .on('error', function (error) { gutil.log(gutil.colors.red(error.toString())); })
-            .pipe(source(filename+".js"))//'./main.js'
+            .pipe(source(name+".js"))//'./main.js'
             .pipe(buffer())
             .pipe(gulp.dest(outdir));//'./dist/js/'
     }
